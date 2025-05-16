@@ -1,6 +1,6 @@
 
 
-function Home() {
+export const Home = () => {
     console.log("I mounted Home")
   return (
     <>

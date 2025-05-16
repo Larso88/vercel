@@ -1,15 +1,30 @@
 import {Link} from "react-router-dom";
+import styled from "styled-components";
+
+const StyledHeaderLink = styled(Link)`
+  color: #f1f1f1;
+  
+  &:hover {
+    color: red
+  }
+`
+const StyledHeaderLinkWrapper = styled.div`
+    font-size: 1.8rem;
+    display: flex;
+    flex: 6;
+    gap: 7rem;
+`
 
 
-function HeaderNav() {
+export const HeaderNav = () => {
     console.log("I mounted HeaderNav")
     return (
-        <>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-            <Link to="/games">Games</Link>
+        <StyledHeaderLinkWrapper>
+            <StyledHeaderLink to="/">Home</StyledHeaderLink>
+            <StyledHeaderLink to="/about">About</StyledHeaderLink>
+            <StyledHeaderLink to="/shoppingList">Shopping List</StyledHeaderLink>
 
-        </>
+        </StyledHeaderLinkWrapper>
     );
 }
 
