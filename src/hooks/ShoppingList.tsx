@@ -36,7 +36,7 @@ const StyledQuantitySection = styled.div`
 `
 
 const ShoppingList = ({ items, setItems, loading } : ShoppingListProps) => {
-    if (loading) return <p>Loading shopping list...</p>;
+    if (loading) return <p>Loading shopping list..</p>;
 
     return (
         <div>
