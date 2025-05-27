@@ -23,9 +23,8 @@ const DeleteButton: React.FC<DeleteButtonProps> = ({ id, onDeleteSuccess }) => {
         try {
             await deleteShoppingListItem(id);
             onDeleteSuccess();
-        } catch (err) {
-            console.log("HandleDelete, inside catch");
-            setError(err.message || "Failed to delete");
+        } catch (err: unknown) {
+            setError((err as Error).message  || "Failed to delete");
         } finally {
             setLoading(false);
         }

@@ -1,11 +1,12 @@
 import DeleteButton from "../components/DeleteShoppingItem.tsx";
 import React from "react";
 import styled from "styled-components";
+import {ShoppingListItem} from "../api/ShoppingListController.ts";
 
 
 interface ShoppingListProps {
-    items: { id: number; name: string }[];
-    setItems: React.Dispatch<React.SetStateAction<{ id: number; name: string }[]>>;
+    items: ShoppingListItem[];
+    setItems: React.Dispatch<React.SetStateAction<ShoppingListItem[]>>;
     loading: boolean;
 }
 

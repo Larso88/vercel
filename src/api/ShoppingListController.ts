@@ -1,24 +1,38 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080/api/shoppinglist';
+export interface ShoppingListItem {
+    id: number;
+    name: string;
+    quantity: number;
+    purchased: boolean;
+}
 
-export const fetchShoppingList = async () => {
+export type ShoppingListResponse = ShoppingListItem[];
+
+const BASE_URL = import.meta.env.VITE_REACT_APP_SHOPPING_LIST_API_URL as string || 'http://localhost:8080/api/shoppinglist';
+
+
+const axiosInstance = axios.create({
+    baseURL: BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+
+export const fetchShoppingList = async () : Promise<ShoppingListResponse> => {
     try {
-        const response = await axios.get(BASE_URL);
-        return response.data;
+        const response = await axiosInstance.get<ShoppingListResponse>('/');
+        return response.data as ShoppingListResponse;
     } catch (error) {
         console.error('Error fetching shopping list:', error);
         throw error;
     }
 };
 
-export const addShoppingListItem = async (item) => {
+export const addShoppingListItem = async (item: Omit<ShoppingListItem, 'id'>) : Promise<ShoppingListItem> => {
     try {
-        const response = await axios.post(BASE_URL, item, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await axiosInstance.post('/', item);
         return response.data;
     } catch (error) {
         console.error('Error adding item:', error);
@@ -26,21 +40,17 @@ export const addShoppingListItem = async (item) => {
     }
 };
 
-export const deleteShoppingListItem = async (itemId) => {
+export const deleteShoppingListItem = async (itemId: number): Promise<void> => {
     try {
-        await axios.delete(`${BASE_URL}/${itemId}`);
-    } catch (error) {
-        // Log more details about the error
+        await axiosInstance.delete(`/${itemId}`);
+    } catch (error : any) {
         if (error.response) {
-            // Server responded with a non-2xx status code
             console.error('Error response:', error.response.data);
             throw new Error(error.response.data.message || 'Failed to delete item');
         } else if (error.request) {
-            // Request was made but no response received
             console.error('No response from server:', error.request);
             throw new Error('No response from server');
         } else {
-            // Something else happened
             console.error('Error:', error.message);
             throw new Error(error.message);
         }

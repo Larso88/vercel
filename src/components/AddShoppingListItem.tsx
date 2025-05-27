@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { addShoppingListItem } from '../api/ShoppingListController.ts';
+import React, { useState } from 'react';
+import {addShoppingListItem, ShoppingListItem} from '../api/ShoppingListController.ts';
 import styled from "styled-components";
 
 const StyledInputWrapper = styled.div`
@@ -27,18 +27,25 @@ const StyledAddItemButton = styled.button`
   }
 `;
 
+interface ShoppingListAddProps {
+    onItemAdded?: (item: ShoppingListItem) => void;
+}
 
-const ShoppingListAdd = ({ onItemAdded }) => {
-    const [newItem, setNewItem] = useState('');
+const ShoppingListAdd: React.FC<ShoppingListAddProps> = ({ onItemAdded }) => {
+    const [newItem, setNewItem] = useState<string>('');
 
     const handleAddItem = async () => {
         if (!newItem.trim()) return;
         try {
-            const addedItem = await addShoppingListItem({ name: newItem });
+            const addedItem = await addShoppingListItem({ name: newItem  } as ShoppingListItem);
             setNewItem('');
             if (onItemAdded) onItemAdded(addedItem);
-        } catch (error) {
+        } catch (error: unknown) {
+            if(error instanceof Error) {
             console.error('Error adding item:', error);
+            } else {
+                console.error('Uknown error:', error)
+            }
         }
     };
 

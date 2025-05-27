@@ -1,7 +1,7 @@
 import FetchShoppingListComponent from "../hooks/ShoppingList.tsx";
-import { fetchShoppingList } from "../api/ShoppingListController.ts";
+import {fetchShoppingList, ShoppingListItem} from "../api/ShoppingListController.ts";
 import AddShoppingListItem from "../components/AddShoppingListItem.tsx";
-import { useEffect, useState } from "react";
+import React, {JSX, useEffect, useState} from "react";
 import styled from "styled-components";
 
 
@@ -28,9 +28,9 @@ const ListQuantityHeader = styled.h5`
 `
 
 
-export const ShoppingList = () => {
-    const [items, setItems] = useState([]);
-    const [loading, setLoading] = useState(false);
+export const ShoppingList : React.FC = () : JSX.Element => {
+    const [items, setItems] = useState<ShoppingListItem[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         setLoading(true)
@@ -38,7 +38,7 @@ export const ShoppingList = () => {
         setLoading(false)
     }, []);
 
-    const handleItemAdded = (addedItem) => {
+    const handleItemAdded = (addedItem: ShoppingListItem) => {
         setItems(prevItems => [...prevItems, addedItem]);
     };
 
