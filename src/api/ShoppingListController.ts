@@ -22,7 +22,7 @@ const axiosInstance = axios.create({
 
 export const fetchShoppingList = async () : Promise<ShoppingListResponse> => {
     try {
-        const response = await axiosInstance.get<ShoppingListResponse>('/');
+        const response = await axiosInstance.get<ShoppingListResponse>('');
         return response.data as ShoppingListResponse;
     } catch (error) {
         console.error('Error fetching shopping list:', error);
@@ -32,7 +32,7 @@ export const fetchShoppingList = async () : Promise<ShoppingListResponse> => {
 
 export const addShoppingListItem = async (item: Omit<ShoppingListItem, 'id'>) : Promise<ShoppingListItem> => {
     try {
-        const response = await axiosInstance.post('/', item);
+        const response = await axiosInstance.post('', item);
         return response.data;
     } catch (error) {
         console.error('Error adding item:', error);
