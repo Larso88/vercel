@@ -1,7 +1,7 @@
 import HeaderNav from "./HeaderNav.tsx";
 import styled from "styled-components";
-import {useBreakpointContext} from "../context/BreakpointContext.tsx";
 import Avatar from "../assets/Avatar.png"
+import React from "react";
 
 const StyledHeader = styled.div`
   width: 88%;
@@ -21,28 +21,33 @@ const StyledLeftContent = styled.div`
 `
 
 const StyledAvatar = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
 
   @media (max-width: 768px) {
-    width: 60px;
-    height: 60px;
+    width: 90px;
+    height: 90px;
   }
 `
 const StyledHeaderCenterSection = styled.div`
+    font-size: 0.8rem;
+    color: red;
     display: flex;
-    flex: 2;
+    flex: 4;
+  
+    @media(max-width: 768px) {
+      font-size: 1rem;
+    }
 `
 
-export const Header = () => {
-    const { isMobile, isTablet, isDesktop } = useBreakpointContext();
+export const Header: React.FC = () => {
     return (
         <>
             <StyledHeader className="Test">
                 <StyledLeftContent>
                     <StyledAvatar src={Avatar} />
                 </StyledLeftContent>
-                {isDesktop ?? <StyledHeaderCenterSection>Site is much under construction</StyledHeaderCenterSection>}
+                    <StyledHeaderCenterSection>Site is much under construction</StyledHeaderCenterSection>
                 <HeaderNav />
             </StyledHeader>
         </>

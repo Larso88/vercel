@@ -11,8 +11,9 @@ const StyledHeaderLink = styled(Link)`
   }
 `
 const StyledHeaderLinkWrapper = styled.div`
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     display: flex;
+    justify-content: end;
     flex: 6;
     gap: 7rem;
   
