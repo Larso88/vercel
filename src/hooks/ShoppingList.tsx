@@ -13,10 +13,15 @@ interface ShoppingListProps {
 const StyledUl = styled.ul`
   width: 600px ;
   list-style: none;
+  
+  @media(max-width: 768px) {
+    width: 80%;
+  }
 `
 
 const StyledListItem = styled.li`
   display: flex;
+  gap: 2rem 1rem;
 `
 
 const StyledItemName = styled.h5`
@@ -25,6 +30,10 @@ const StyledItemName = styled.h5`
   flex: 6;
   margin: 0.6rem 0;
   padding: 0;
+
+  @media(max-width: 768px) {
+    font-size: 1rem;
+  }
 `
 
 const StyledQuantitySection = styled.div`

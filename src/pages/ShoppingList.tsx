@@ -10,21 +10,30 @@ const StyledShoppingListWrapper = styled.div`
   justify-self: center;
   flex-direction: column;
   align-items: center;
-  width: 100vw;
+  width: 85%;
   max-width: 1000px;
 `
 const ListHeader = styled.div`
   width: 700px;
+  height: 20px;
   display: flex;
   justify-content: center;
   gap: 350px;
   border-bottom: 1px solid white;
+  
+  @media(max-width: 768px) {
+    width: 70%;
+    gap: 40%;
+  }
 `
 const ListItemHeader = styled.h5`
+    margin: 0;
+    padding: 0;
   
 `
 const ListQuantityHeader = styled.h5`
-  
+  margin: 0;
+  padding: 0;
 `
 
 
@@ -44,7 +53,6 @@ export const ShoppingList : React.FC = () : JSX.Element => {
 
     return    (
         <StyledShoppingListWrapper>
-
             <AddShoppingListItem onItemAdded={handleItemAdded} />
             <ListHeader>
                 <ListItemHeader>Item</ListItemHeader>
