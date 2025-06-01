@@ -2,6 +2,8 @@ import HeaderNav from "./HeaderNav.tsx";
 import styled from "styled-components";
 import Avatar from "../assets/Avatar.png"
 import React from "react";
+import PromptInstallPWA from "../components/PromptInstallPWA.tsx";
+
 
 const StyledHeader = styled.div`
   width: 88%;
@@ -42,13 +44,20 @@ const StyledHeaderCenterSection = styled.div`
 `
 
 export const Header: React.FC = () => {
+    console.log("Header rendered");
+
     return (
         <>
             <StyledHeader className="Test">
                 <StyledLeftContent>
                     <StyledAvatar src={Avatar} />
                 </StyledLeftContent>
-                    <StyledHeaderCenterSection>Site is much under construction</StyledHeaderCenterSection>
+                    <StyledHeaderCenterSection>
+                        <p>
+                            Site is much under construction
+                        </p>
+                        <PromptInstallPWA />
+                    </StyledHeaderCenterSection>
                 <HeaderNav />
             </StyledHeader>
         </>
