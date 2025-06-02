@@ -1,10 +1,16 @@
+import styled from "styled-components";
+import colors from "../assets/colors.ts";
 
+const StyledHeader = styled.h1`
+  font-family: "Academy Engraved LET";
+  margin: 2rem;
+  color: ${colors.platinum}
+`
 
 export const Home = () => {
-    console.log("I mounted Home")
   return (
     <>
-        <h1>Hello world!</h1>
+        <StyledHeader>Hello world!</StyledHeader>
     </>
   );
 }

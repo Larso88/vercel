@@ -33,10 +33,12 @@ const StyledAvatar = styled.img`
   }
 `
 const StyledHeaderCenterSection = styled.div`
+    
     font-size: 0.8rem;
     color: red;
     display: flex;
-    flex: 4;
+    width: 80%;
+    margin: 1rem;
   
     @media(max-width: 768px) {
       font-size: 1rem;
@@ -44,8 +46,6 @@ const StyledHeaderCenterSection = styled.div`
 `
 
 export const Header: React.FC = () => {
-    console.log("Header rendered");
-
     return (
         <>
             <StyledHeader className="Test">
