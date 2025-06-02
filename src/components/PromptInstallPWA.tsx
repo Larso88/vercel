@@ -4,12 +4,12 @@ import { useInstallPrompt } from "../components/useInstallPrompt.tsx";
 
 export const PromptInstallPWA = () => {
 
-    const { isPromptVisible, promptToInstall } = useInstallPrompt();
+    const { isVisible, promptToInstall } = useInstallPrompt();
 
-    if (!isPromptVisible) return null;
+    if (!isVisible) return null;
     return (
         <button onClick={promptToInstall}>
-            Install this app
+            Install App
         </button>
     );
 }
