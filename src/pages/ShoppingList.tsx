@@ -3,6 +3,7 @@ import {fetchShoppingList, ShoppingListItem} from "../api/ShoppingListController
 import AddShoppingListItem from "../components/AddShoppingListItem.tsx";
 import React, {JSX, useEffect, useState} from "react";
 import styled from "styled-components";
+import colors from "../assets/colors.ts";
 
 
 const StyledShoppingListWrapper = styled.div`
@@ -15,25 +16,29 @@ const StyledShoppingListWrapper = styled.div`
 `
 const ListHeader = styled.div`
   width: 700px;
-  height: 20px;
+  height: 40px;
   display: flex;
   justify-content: center;
   gap: 350px;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid ${colors.offset};
   
   @media(max-width: 768px) {
     width: 70%;
     gap: 40%;
   }
 `
-const ListItemHeader = styled.h5`
+const ListItemHeader = styled.h4`
+    font-family: "Academy Engraved LET";
+    font-size: 1.3rem;
     margin: 0;
-    padding: 0;
+    padding: 1rem;
   
 `
-const ListQuantityHeader = styled.h5`
+const ListQuantityHeader = styled.h4`
+  font-family: "Academy Engraved LET";
+  font-size: 1.3rem;
   margin: 0;
-  padding: 0;
+  padding: 1rem;
 `
 
 

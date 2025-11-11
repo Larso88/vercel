@@ -1,10 +1,10 @@
 const colors = {
-    black: '#000000ff',
-    oxfordBlue: '#14213dff',
-    orangeWeb: '#fca311ff',
-    platinum: '#e5e5e5ff',
+    primary: '#222831',
+    secondary: '#14213dff',
+    lightPrimary: '#393E46',
+    offset: '#00ADB5',
     white: '#ffffffff',
-    light: '#f8f9fa',
+    light: '#EEEEEE',
     dark: '#343a40',
 }
 export default colors;

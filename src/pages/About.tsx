@@ -10,7 +10,7 @@ const StyledHeader = styled.h1`
 
 const StyledP = styled.p`
   font-family: "Academy Engraved LET";
-  color: ${colors.platinum};
+  color: ${colors.light};
   font-size: 1.2rem;
   margin: 3rem;
 `

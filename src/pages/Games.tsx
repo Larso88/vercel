@@ -5,7 +5,7 @@ import colors from "../assets/colors.ts";
 const StyledHeader = styled.h1`
   margin: 2rem;
   font-family: "Academy Engraved LET";
-  color: ${colors.platinum};
+  color: ${colors.light};
 `
 
 export const Games = () => {

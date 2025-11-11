@@ -8,7 +8,7 @@ const BottomNav = styled.nav`
   bottom: 0;
   width: 100%;
   height: 60px;
-  background-color: ${colors.platinum};
+  background-color: ${colors.lightPrimary};
   border-top: 1px solid #ccc;
   display: flex;
   justify-content: space-around;
@@ -17,14 +17,14 @@ const BottomNav = styled.nav`
 
   a {
     text-decoration: none;
-    color: #666;
+    color: ${colors.light};
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: 12px;
 
     &.active {
-      color: #007aff;
+      color: ${colors.offset};
     }
 
     svg {
@@ -36,21 +36,29 @@ const BottomNav = styled.nav`
 `;
 
 export const MobileBottomNav = () => {
+
+    const linkClass = ({ isActive }: { isActive: boolean }) =>
+        isActive ? "active" : undefined;
+
+    const exact = { end: true } as const;
     return (
         <BottomNav>
-            <NavLink to="/" activeClassName="active">
+            <NavLink to="/" className={linkClass} {...exact}>
                 <Home />
                 <span>Home</span>
             </NavLink>
-            <NavLink to="/about" activeClassName="active">
+
+            <NavLink to="/about" className={linkClass}>
                 <Info />
                 <span>About</span>
             </NavLink>
-            <NavLink to="/shoppingList" activeClassName="active">
+
+            <NavLink to="/shoppingList" className={linkClass}>
                 <ShoppingCart />
                 <span>Shopping</span>
             </NavLink>
-            <NavLink to="/games" activeClassName="active">
+
+            <NavLink to="/games" className={linkClass}>
                 <Gamepad2 />
                 <span>Games</span>
             </NavLink>

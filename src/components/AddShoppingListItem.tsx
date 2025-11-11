@@ -12,8 +12,8 @@ const StyledInputWrapper = styled.div`
 `;
 
 const StyledItemListInput = styled.input`
-  background-color: ${colors.platinum};
-  color: ${colors.oxfordBlue};
+  background-color: ${colors.lightPrimary};
+  color: ${colors.light};
   width: 400px;
   height: 40px;
   border-radius: 8px 0 0 8px;
@@ -27,30 +27,40 @@ const StyledItemListInput = styled.input`
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     background-color: ${colors.white};
   }
+  &::placeholder {
+    color: ${colors.offset};
+    font-style: italic;
+    font-size: 1.2rem;
+  }
   
   @media(max-width: 768px) {
     width: 50%;
     height: 25px;
     font-size: 0.8rem;
+    &::placeholder {
+      color: ${colors.light};
+      font-style: italic;
+      font-size: 0.7rem;
+    }
   }
 
 `;
 const flash = keyframes`
   0% {
-    background-color: ${colors.platinum};
+    background-color: ${colors.primary};
   }
   50% {
-    background-color: ${colors.oxfordBlue};
+    background-color: ${colors.light};
     color: ${colors.white};
   }
   100% {
-    background-color: ${colors.platinum};
+    background-color: ${colors.primary};
   }
 `;
 
 const StyledAddItemButton = styled.button<{ isFlashing: boolean }>`
-  background-color: ${colors.platinum};
-  color: ${colors.oxfordBlue};
+  background-color: ${colors.lightPrimary};
+  color: ${colors.offset};
   display: flex;
   font-size: 1.8rem;
   justify-content: center;
