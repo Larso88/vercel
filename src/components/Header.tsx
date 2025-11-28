@@ -2,7 +2,7 @@ import HeaderNav from "./HeaderNav.tsx";
 import styled from "styled-components";
 import Avatar from "../assets/Avatar.png"
 import React from "react";
-import PromptInstallPWA from "../components/PromptInstallPWA.tsx";
+import {InstallPWAButton} from "@components/InstallPWAButton.tsx";
 
 
 const StyledHeader = styled.div`
@@ -56,7 +56,7 @@ export const Header: React.FC = () => {
                         <p>
                             Site is much under construction
                         </p>
-                        <PromptInstallPWA />
+                        <InstallPWAButton />
                     </StyledHeaderCenterSection>
                 <HeaderNav />
             </StyledHeader>

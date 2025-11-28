@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 
 self.addEventListener("install", (event) => {
@@ -9,10 +9,16 @@ self.addEventListener("activate", (event) => {
     event.waitUntil(
         (async () => {
             const names = await caches.keys();
-            await Promise.all(names.map((n) => (n !== RUNTIME_CACHE ? caches.delete(n) : undefined)));
+            await Promise.all(
+                names.map((n) => (n !== RUNTIME_CACHE ? caches.delete(n) : undefined))
+            );
             await self.clients.claim();
         })()
     );
+});
+
+self.addEventListener("message", (event) => {
+    if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 const shouldCacheRequest = (request) => {
@@ -37,11 +43,11 @@ self.addEventListener("fetch", (event) => {
                 try {
                     const fresh = await fetch(req);
                     const cache = await caches.open(RUNTIME_CACHE);
-                    cache.put("/index.html", fresh.clone());
+                    cache.put("/", fresh.clone());
                     return fresh;
                 } catch {
                     const cache = await caches.open(RUNTIME_CACHE);
-                    const fallback = await cache.match("/index.html");
+                    const fallback = await cache.match("/") || await cache.match("/index.html");
                     if (fallback) return fallback;
                     return new Response(
                         "<!doctype html><title>Offline</title><h1>Offline</h1><p>Connect and reload.</p>",
