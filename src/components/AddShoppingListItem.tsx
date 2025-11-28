@@ -19,7 +19,6 @@ const StyledItemListInput = styled.input`
   border-radius: 8px 0 0 8px;
   text-align: center;
   font-size: 1.5rem;
-  border: 0;
 
   &:focus {
     outline: none;
