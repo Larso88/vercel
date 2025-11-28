@@ -2,8 +2,7 @@ import HeaderNav from "./HeaderNav.tsx";
 import styled from "styled-components";
 import Avatar from "../assets/Avatar.png"
 import React from "react";
-import {InstallPWAButton} from "@components/InstallPWAButton.tsx";
-
+import {InstallPWAButton} from "./InstallPWAButton.tsx";
 
 const StyledHeader = styled.div`
   width: 88%;
