@@ -8,8 +8,8 @@ import {
 } from "../api/ShoppingListController";
 import AddShoppingListItem from "../components/AddShoppingListItem";
 import { useSwipeable } from "react-swipeable";
+import {Loader2} from "lucide-react";
 
-/* --------------------------- Layout ---------------------------- */
 
 const StyledShoppingListWrapper = styled.div`
     display: flex;
@@ -48,7 +48,6 @@ const ListQuantityHeader = styled.h4`
     padding: 1rem;
 `;
 
-/* ----------------------- Item styling -------------------------- */
 
 const cardBg = "#1b1b1b";
 const keyline = "rgba(255,255,255,0.06)";
@@ -163,8 +162,22 @@ const QtyPill = styled.div`
     letter-spacing: 0.02em;
     box-shadow: inset 0 0 0 1px ${accent}1a;
 `;
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
 
-/* ------------------------ Swipeable row ------------------------- */
+const LoaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+`;
+
+const Spinner = styled(Loader2)`
+  animation: ${spin} 1s linear infinite;
+  opacity: 0.8;
+`;
+
 
 type SwipeableRowProps = {
     children: ReactNode;
@@ -268,7 +281,9 @@ export default function ShoppingList() {
             </ListHeader>
 
             {loading ? (
-                <p style={{ padding: 12, opacity: 0.8 }}>Loading shopping list…</p>
+                <LoaderWrapper>
+                    <Spinner size={32} strokeWidth={2} />
+                </LoaderWrapper>
             ) : (
                 <StyledUl>
                     {items.map((item) => (

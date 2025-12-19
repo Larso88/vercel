@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 
 self.addEventListener("install", (event) => {
@@ -21,37 +21,43 @@ self.addEventListener("message", (event) => {
     if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
 
-const shouldCacheRequest = (request) => {
+const isSameOriginGet = (request) => {
     if (request.method !== "GET") return false;
     const url = new URL(request.url);
+    return url.origin === self.location.origin;
+};
 
-    if (url.origin !== self.location.origin) return false;
+const shouldIgnore = (request) => {
+    const url = new URL(request.url);
 
-    if (url.pathname.startsWith("/sw.js")) return false;
+    if (url.pathname === "/sw.js") return true;
 
-    if (url.pathname.startsWith("/api/")) return false;
+    if (url.pathname.startsWith("/api/")) return true;
 
-    return true;
+    return false;
 };
 
 self.addEventListener("fetch", (event) => {
     const req = event.request;
 
+    if (!isSameOriginGet(req) || shouldIgnore(req)) return;
+
     if (req.mode === "navigate") {
         event.respondWith(
             (async () => {
+                const cache = await caches.open(RUNTIME_CACHE);
                 try {
                     const fresh = await fetch(req);
-                    const cache = await caches.open(RUNTIME_CACHE);
-                    cache.put("/", fresh.clone());
+                    cache.put(req, fresh.clone());
                     return fresh;
                 } catch {
-                    const cache = await caches.open(RUNTIME_CACHE);
-                    const fallback = await cache.match("/") || await cache.match("/index.html");
-                    if (fallback) return fallback;
-                    return new Response(
-                        "<!doctype html><title>Offline</title><h1>Offline</h1><p>Connect and reload.</p>",
-                        { headers: { "Content-Type": "text/html" } }
+                    return (
+                        (await cache.match(req)) ||
+                        (await cache.match("/index.html")) ||
+                        new Response(
+                            "<!doctype html><title>Offline</title><h1>Offline</h1><p>Connect and reload.</p>",
+                            { headers: { "Content-Type": "text/html" } }
+                        )
                     );
                 }
             })()
@@ -59,19 +65,17 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
-    if (shouldCacheRequest(req)) {
-        event.respondWith(
-            (async () => {
-                const cache = await caches.open(RUNTIME_CACHE);
-                const cached = await cache.match(req);
-                if (cached) return cached;
+    event.respondWith(
+        (async () => {
+            const cache = await caches.open(RUNTIME_CACHE);
+            const cached = await cache.match(req);
+            if (cached) return cached;
 
-                const resp = await fetch(req);
-                if (resp && resp.status === 200 && resp.type === "basic") {
-                    cache.put(req, resp.clone());
-                }
-                return resp;
-            })()
-        );
-    }
+            const resp = await fetch(req);
+            if (resp && resp.status === 200 && resp.type === "basic") {
+                cache.put(req, resp.clone());
+            }
+            return resp;
+        })()
+    );
 });

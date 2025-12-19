@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Avatar from "../assets/Avatar.png"
 import React from "react";
 import {InstallPWAButton} from "./InstallPWAButton.tsx";
+import AuthButton from "./LoginButton.tsx";
 
 const StyledHeader = styled.div`
   width: 88%;
@@ -46,20 +47,16 @@ const StyledHeaderCenterSection = styled.div`
 
 export const Header: React.FC = () => {
     return (
-        <>
             <StyledHeader className="Test">
                 <StyledLeftContent>
                     <StyledAvatar src={Avatar} />
                 </StyledLeftContent>
                     <StyledHeaderCenterSection>
-                        <p>
-                            Site is much under construction
-                        </p>
                         <InstallPWAButton />
                     </StyledHeaderCenterSection>
                 <HeaderNav />
+                <AuthButton />
             </StyledHeader>
-        </>
     );
 }
 
