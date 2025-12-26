@@ -1,8 +1,6 @@
-// src/types/pwa-install.d.ts
 export {};
 
 declare global {
-    // Chromium-only event
     interface BeforeInstallPromptEvent extends Event {
         readonly platforms?: string[];
         prompt: () => Promise<void>;
@@ -14,7 +12,6 @@ declare global {
         appinstalled: Event;
     }
 
-    // iOS Safari exposes a non-standard flag
     interface Navigator {
         standalone?: boolean;
     }

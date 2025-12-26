@@ -6,8 +6,6 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const isStandalone = (): boolean => {
-    // iOS Safari
-    // @ts-ignore
     if (typeof navigator !== "undefined" && "standalone" in navigator && (navigator as any).standalone) {
         return true;
     }

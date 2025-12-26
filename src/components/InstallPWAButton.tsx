@@ -1,4 +1,3 @@
-// src/components/InstallPWAButton.tsx
 import React, { useState } from "react";
 import styled from "styled-components";
 import {usePWAInstall} from "../pwa/usePWAInstall.ts";

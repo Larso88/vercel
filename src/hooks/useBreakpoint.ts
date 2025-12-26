@@ -1,4 +1,3 @@
-// src/hooks/useBreakpoint.ts
 import { useState, useEffect } from "react";
 
 export type Breakpoint = {

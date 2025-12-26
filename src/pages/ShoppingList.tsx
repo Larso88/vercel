@@ -1,140 +1,64 @@
-import { useEffect, useState, type ReactNode } from "react";
-import styled, { keyframes } from "styled-components";
-import colors from "../assets/colors";
-import {
-    fetchShoppingList,
-    deleteShoppingListItem,
-    type ShoppingListItem,
-} from "../api/ShoppingListController";
+import {useEffect, useState} from "react";
+import styled, {keyframes} from "styled-components";
+import {deleteShoppingListItem, fetchShoppingList, type ShoppingListItem} from "../api/ShoppingListController";
 import AddShoppingListItem from "../components/AddShoppingListItem";
-import { useSwipeable } from "react-swipeable";
 import {Loader2} from "lucide-react";
+import SidePager from "../components/SidePager";
+import SwipeableListItem from "../components/SwipeableListItem";
+import colors from "../assets/colors.ts";
 
-
-const StyledShoppingListWrapper = styled.div`
-    display: flex;
-    justify-self: center;
-    flex-direction: column;
-    align-items: center;
-    width: 85%;
-    max-width: 1000px;
-`;
-
-const ListHeader = styled.div`
-    width: 700px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    gap: 350px;
-    border-bottom: 1px solid ${colors.offset};
-
-    @media (max-width: 768px) {
-        width: 70%;
-        gap: 40%;
-    }
-`;
-
-const ListItemHeader = styled.h4`
-    font-family: "Academy Engraved LET";
-    font-size: 1.3rem;
-    margin: 0;
-    padding: 1rem;
-`;
-
-const ListQuantityHeader = styled.h4`
-    font-family: "Academy Engraved LET";
-    font-size: 1.3rem;
-    margin: 0;
-    padding: 1rem;
-`;
-
-
-const cardBg = "#1b1b1b";
 const keyline = "rgba(255,255,255,0.06)";
 const shadow = "rgba(0,0,0,0.35)";
 const text = "rgba(255,255,255,0.9)";
-const accent = "#42d4c8";
 
-const StyledUl = styled.ul`
+const Page = styled.div`
     width: 100%;
     max-width: 760px;
+    margin: 0 auto;
+`;
+
+const Panel = styled.div`
+    width: 100%;
+    border-radius: 18px;
+    background: radial-gradient(1200px 240px at 20% -30%, rgba(255, 255, 255, 0.06), transparent 60%),
+        linear-gradient(180deg, rgba(18, 18, 18, 0.92), rgba(12, 12, 12, 0.92));
+    outline: 1px solid ${keyline};
+    box-shadow: 0 12px 34px ${shadow};
+    
+`;
+
+const HeaderRow = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 64px;
+    align-items: center;
+    padding: 6px 10px 10px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid ${keyline};
+`;
+
+const HeaderCell = styled.div<{ align?: "left" | "right" }>`
+    text-align: ${({ align }) => align ?? "left"};
+`;
+
+const StyledUl = styled.ul`
+    justify-content: center;
+    width: 100%;
     list-style: none;
-    padding: 0;
-    margin: 10px auto 0;
+    padding: 12px 0 0 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-
-    @media (max-width: 768px) {
-        padding: 0 12px;
-    }
-`;
-
-const tap = keyframes`
-    from { transform: scale(0.98); }
-    to   { transform: scale(1); }
-`;
-
-const RowShell = styled.li`
-    position: relative;
-    height: 56px;
-    border-radius: 14px;
-    overflow: hidden;
-    outline: 1px solid ${keyline};
-    box-shadow: 0 6px 18px ${shadow};
-`;
-
-const Actions = styled.div<{ width: number }>`
-    position: absolute;
-    inset: 0 0 0 auto;
-    width: ${({ width }) => width}px;
-    display: grid;
-    place-items: center;
-    background: #b02020;
-    color: white;
-    font-weight: 700;
-    user-select: none;
-`;
-
-const Card = styled.div<{ x: number; dragging: boolean }>`
-    position: absolute;
-    inset: 0;
-    display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    padding-right: 14px;
-
-    background: ${cardBg};
-    color: ${text};
-    transform: translateX(${({ x }) => x}px);
-    transition: ${({ dragging }) => (dragging ? "none" : "transform .12s ease")};
-    animation: ${tap} 0.12s ease;
-
-    &::before {
-        content: "";
-        position: absolute;
-        inset: 0 auto 0 0;
-        width: 5px;
-        border-radius: inherit;
-        background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.06),
-                rgba(255, 255, 255, 0.18)
-        ),
-        linear-gradient(180deg, ${accent}, ${accent});
-        background-blend-mode: soft-light, normal;
-        opacity: 0.9;
-    }
-
-    &:active {
-        transform: translateX(${({ x }) => x}px) scale(0.985);
-    }
+    gap: 0.5rem;
+    
 `;
 
-const Name = styled.h5`
-    font-family: "Academy Engraved LET", sans-serif;
-    font-size: 1.2rem;
+const Name = styled.div`
+    font-family: "Academy Engraved LET", system-ui, sans-serif;
+    font-size: 1.1rem;
     font-weight: 600;
     flex: 1 1 auto;
     margin: 0;
@@ -142,99 +66,44 @@ const Name = styled.h5`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-
-    @media (max-width: 768px) {
-        font-size: 1.05rem;
-    }
 `;
 
 const QtyPill = styled.div`
-    width: 56px;
+    width: 64px;
     height: 32px;
-    flex: 0 0 auto;
     display: grid;
     place-items: center;
-    border-radius: 8px;
+    border-radius: 10px;
     background: rgba(255, 255, 255, 0.06);
     outline: 1px solid ${keyline};
-    color: ${text};
+    color: ${colors.offset};
     font-weight: 800;
     letter-spacing: 0.02em;
-    box-shadow: inset 0 0 0 1px ${accent}1a;
 `;
+
+const RowContent = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+`;
+
 const spin = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 `;
 
 const LoaderWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 10px;
 `;
 
 const Spinner = styled(Loader2)`
-  animation: ${spin} 1s linear infinite;
-  opacity: 0.8;
+    color: ${colors.offset};
+    animation: ${spin} 1s linear infinite;
+    opacity: 0.8;
 `;
-
-
-type SwipeableRowProps = {
-    children: ReactNode;
-    onDelete: () => void;
-    deleteWidth?: number;
-};
-
-function SwipeableRow({ children, onDelete, deleteWidth = 88 }: SwipeableRowProps) {
-    const [x, setX] = useState<number>(0);
-    const [dragging, setDragging] = useState<boolean>(false);
-    const [open, setOpen] = useState<boolean>(false);
-
-    const clamp = (n: number) => Math.max(-deleteWidth, Math.min(0, n));
-
-    const handlers = useSwipeable({
-        onSwiping: (e) => {
-            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-                setDragging(true);
-                setX(clamp(-e.deltaX));
-            }
-        },
-        onSwipedLeft: (e) => {
-            setDragging(false);
-            const shouldOpen = Math.abs(e.deltaX) > deleteWidth * 0.5;
-            setOpen(shouldOpen);
-            setX(shouldOpen ? -deleteWidth : 0);
-        },
-        onSwipedRight: () => {
-            setDragging(false);
-            setOpen(false);
-            setX(0);
-        },
-        preventScrollOnSwipe: true,
-        trackMouse: false,
-    });
-
-    const handleActionClick = () => onDelete();
-
-    const handleCardClick = () => {
-        if (open && !dragging) {
-            setOpen(false);
-            setX(0);
-        }
-    };
-
-    return (
-        <RowShell {...handlers}>
-            <Actions width={deleteWidth} onClick={handleActionClick}>
-                Delete
-            </Actions>
-            <Card x={x} dragging={dragging} onClick={handleCardClick}>
-                {children}
-            </Card>
-        </RowShell>
-    );
-}
-
 
 export default function ShoppingList() {
     const [items, setItems] = useState<ShoppingListItem[]>([]);
@@ -246,9 +115,7 @@ export default function ShoppingList() {
             try {
                 setLoading(true);
                 const data = await fetchShoppingList();
-                if (!cancelled) {
-                    setItems(data as ShoppingListItem[]);
-                }
+                if (!cancelled) setItems(data as ShoppingListItem[]);
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -258,42 +125,48 @@ export default function ShoppingList() {
         };
     }, []);
 
-    const handleItemAdded = (addedItem: ShoppingListItem) => {
-        setItems((prev) => [...prev, addedItem]);
-    };
+    const handleItemAdded = (addedItem: ShoppingListItem) => setItems((prev) => [...prev, addedItem]);
 
     const handleDelete = async (id: number) => {
-        try {
-            await deleteShoppingListItem(id);
-            setItems((prev) => prev.filter((i) => i.id !== id));
-        } catch (e) {
-            console.error("Delete failed", e);
-        }
+        await deleteShoppingListItem(id);
+        setItems((prev) => prev.filter((i) => i.id !== id));
     };
 
     return (
-        <StyledShoppingListWrapper>
+        <Page>
             <AddShoppingListItem onItemAdded={handleItemAdded} />
 
-            <ListHeader>
-                <ListItemHeader>Item</ListItemHeader>
-                <ListQuantityHeader>quantity</ListQuantityHeader>
-            </ListHeader>
+            <SidePager
+                label="Liste"
+                onPrev={() => console.log("prev list")}
+                onNext={() => console.log("next list")}
+                prevDisabled
+                nextDisabled
+            >
+                <Panel className="test2">
+                    <HeaderRow>
+                        <HeaderCell>Vare</HeaderCell>
+                        <HeaderCell align="right">Ant.</HeaderCell>
+                    </HeaderRow>
 
-            {loading ? (
-                <LoaderWrapper>
-                    <Spinner size={32} strokeWidth={2} />
-                </LoaderWrapper>
-            ) : (
-                <StyledUl>
-                    {items.map((item) => (
-                        <SwipeableRow key={item.id} onDelete={() => handleDelete(item.id)}>
-                            <Name>{item.name}</Name>
-                            <QtyPill>{item.quantity ?? 0}</QtyPill>
-                        </SwipeableRow>
-                    ))}
-                </StyledUl>
-            )}
-        </StyledShoppingListWrapper>
+                    {loading ? (
+                        <LoaderWrapper>
+                            <Spinner size={28} strokeWidth={2} />
+                        </LoaderWrapper>
+                    ) : (
+                        <StyledUl className="test1">
+                            {items.map((item) => (
+                                <SwipeableListItem key={item.id} onDelete={() => handleDelete(item.id)}>
+                                    <RowContent>
+                                        <Name>{item.name}</Name>
+                                        <QtyPill>{item.quantity ?? 1}</QtyPill>
+                                    </RowContent>
+                                </SwipeableListItem>
+                            ))}
+                        </StyledUl>
+                    )}
+                </Panel>
+            </SidePager>
+        </Page>
     );
 }

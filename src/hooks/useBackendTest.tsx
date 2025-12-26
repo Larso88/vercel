@@ -8,7 +8,7 @@ const BackendTest = () => {
         fetch('/api/test')
             .then((response) => {
                 if (!response.ok) throw new Error('Failed to fetch the backend message');
-                return response.text(); // Since the backend is returning plain text
+                return response.text();
             })
             .then((data) => setMessage(data))
             .catch((err) => setError(err.message));
