@@ -5,6 +5,7 @@ export interface ShoppingListItem {
     name: string;
     quantity: number;
     purchased: boolean;
+    unit?: string
 }
 
 export type ShoppingListResponse = ShoppingListItem[];

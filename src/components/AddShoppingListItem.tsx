@@ -230,9 +230,7 @@ const ShoppingListAdd: React.FC<ShoppingListAddProps> = ({ onItemAdded }) => {
         try {
             const payload: Partial<ShoppingListItem> = {
                 name: name.trim(),
-                // @ts-expect-error: Add these fields to your ShoppingListItem type when backend is ready
                 quantity: parsedQty ?? 1,
-                // @ts-expect-error: Add these fields to your ShoppingListItem type when backend is ready
                 unit: unit,
             };
 
