@@ -12,7 +12,7 @@ const BottomNav = styled.nav`
     overflow: hidden;
     padding-bottom: env(safe-area-inset-bottom);
     width: 100%;
-    height: calc(78px + env(safe-area-inset-bottom));
+    height: 72px;
     background: linear-gradient(
             to top,
             rgba(18, 18, 18, 0.98),
