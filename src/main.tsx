@@ -13,6 +13,7 @@ import { BreakpointProvider, useBreakpointContext } from "./context/BreakpointCo
 import { MobileBottomNav } from "./components/MobileBottomNavBar";
 import { AuthProvider } from "./auth/AuthProvider";
 import styled from "styled-components";
+import {ProtectedRoute} from "./auth/ProtectedRoute.tsx";
 
 const StyledAppShell = styled.div`
     min-height: 100vh;
@@ -117,7 +118,11 @@ createRoot(document.getElementById("root")!).render(
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/about" element={<About />} />
-                                <Route path="/shoppingList" element={<ShoppingList />} />
+                                <Route path="/shoppingList" element={
+                                    <ProtectedRoute >
+                                    <ShoppingList />
+                                    </ProtectedRoute>
+                                } />
                                 <Route path="/games" element={<Games />} />
                             </Routes>
                         </StyledPageWrapper>

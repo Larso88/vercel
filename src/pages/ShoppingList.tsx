@@ -1,11 +1,19 @@
-import {useEffect, useState} from "react";
-import styled, {keyframes} from "styled-components";
-import {deleteShoppingListItem, fetchShoppingList, type ShoppingListItem} from "../api/ShoppingListController";
+// src/pages/ShoppingList.tsx
+import { useEffect, useMemo, useState } from "react";
+import styled, { keyframes } from "styled-components";
+import {
+    deleteShoppingListItem,
+    fetchItems,
+    fetchLists,
+    type ShoppingList,
+    type ShoppingListItem,
+} from "../api/ShoppingListController";
 import AddShoppingListItem from "../components/AddShoppingListItem";
-import {Loader2} from "lucide-react";
+import { Loader2 } from "lucide-react";
 import SidePager from "../components/SidePager";
 import SwipeableListItem from "../components/SwipeableListItem";
-import colors from "../assets/colors.ts";
+import colors from "../assets/colors";
+import AddShoppingList from "../components/AddShoppingList";
 
 const keyline = "rgba(255,255,255,0.06)";
 const shadow = "rgba(0,0,0,0.35)";
@@ -20,11 +28,14 @@ const Page = styled.div`
 const Panel = styled.div`
     width: 100%;
     border-radius: 18px;
-    background: radial-gradient(1200px 240px at 20% -30%, rgba(255, 255, 255, 0.06), transparent 60%),
-        linear-gradient(180deg, rgba(18, 18, 18, 0.92), rgba(12, 12, 12, 0.92));
+    background: radial-gradient(
+            1200px 240px at 20% -30%,
+            rgba(255, 255, 255, 0.06),
+            transparent 60%
+    ),
+    linear-gradient(180deg, rgba(18, 18, 18, 0.92), rgba(12, 12, 12, 0.92));
     outline: 1px solid ${keyline};
     box-shadow: 0 12px 34px ${shadow};
-    
 `;
 
 const HeaderRow = styled.div`
@@ -53,7 +64,6 @@ const StyledUl = styled.ul`
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    
 `;
 
 const Name = styled.div`
@@ -89,8 +99,12 @@ const RowContent = styled.div`
 `;
 
 const spin = keyframes`
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 `;
 
 const LoaderWrapper = styled.div`
@@ -106,42 +120,120 @@ const Spinner = styled(Loader2)`
 `;
 
 export default function ShoppingList() {
+    const [lists, setLists] = useState<ShoppingList[]>([]);
+    const [activeListId, setActiveListId] = useState<number | null>(null);
+
     const [items, setItems] = useState<ShoppingListItem[]>([]);
     const [loading, setLoading] = useState(false);
 
+    // Fetch lists once
     useEffect(() => {
         let cancelled = false;
+
         (async () => {
             try {
-                setLoading(true);
-                const data = await fetchShoppingList();
-                if (!cancelled) setItems(data as ShoppingListItem[]);
-            } finally {
-                if (!cancelled) setLoading(false);
+                const loadedLists = await fetchLists();
+                if (cancelled) return;
+
+                setLists(loadedLists);
+
+                if (loadedLists.length > 0) {
+                    setActiveListId((prev) => {
+                        if (prev && loadedLists.some((l) => l.id === prev)) return prev;
+                        return loadedLists[0].id;
+                    });
+                } else {
+                    setActiveListId(null);
+                    setItems([]);
+                }
+            } catch (e) {
+                console.error("Failed to fetch lists:", e);
             }
         })();
+
         return () => {
             cancelled = true;
         };
     }, []);
 
-    const handleItemAdded = (addedItem: ShoppingListItem) => setItems((prev) => [...prev, addedItem]);
+    // Fetch items when active list changes
+    useEffect(() => {
+        let cancelled = false;
 
-    const handleDelete = async (id: number) => {
-        await deleteShoppingListItem(id);
-        setItems((prev) => prev.filter((i) => i.id !== id));
+        (async () => {
+            if (!activeListId) {
+                setItems([]);
+                return;
+            }
+
+            try {
+                setLoading(true);
+                const data = await fetchItems(activeListId);
+                if (!cancelled) setItems(data);
+            } catch (e) {
+                console.error("Failed to fetch items:", e);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [activeListId]);
+
+    // SidePager navigation
+    const activeIndex = useMemo(() => {
+        if (!activeListId) return -1;
+        return lists.findIndex((l) => l.id === activeListId);
+    }, [lists, activeListId]);
+
+    const prevDisabled = activeIndex <= 0;
+    const nextDisabled = activeIndex === -1 || activeIndex >= lists.length - 1;
+
+    const onPrev = () => {
+        if (prevDisabled) return;
+        setActiveListId(lists[activeIndex - 1].id);
+    };
+
+    const onNext = () => {
+        if (nextDisabled) return;
+        setActiveListId(lists[activeIndex + 1].id);
+    };
+
+    const activeListName = activeIndex >= 0 ? lists[activeIndex].name : "Liste";
+
+    const handleItemAdded = (addedItem: ShoppingListItem) => {
+        setItems((prev) => [...prev, addedItem]);
+    };
+
+    const handleDelete = async (itemId: number) => {
+        if (!activeListId) return;
+        await deleteShoppingListItem(activeListId, itemId);
+        setItems((prev) => prev.filter((i) => i.id !== itemId));
     };
 
     return (
         <Page>
-            <AddShoppingListItem onItemAdded={handleItemAdded} />
+            <AddShoppingList
+                onListCreated={(created) => {
+                    setLists((prev) => [created, ...prev]);
+                    setActiveListId(created.id);
+                    setItems([]);
+                }}
+            />
+
+            <AddShoppingListItem
+                listId={activeListId ?? undefined}
+                onItemAdded={handleItemAdded}
+            />
 
             <SidePager
-                label="Liste"
-                onPrev={() => console.log("prev list")}
-                onNext={() => console.log("next list")}
-                prevDisabled
-                nextDisabled
+                label={activeListName}
+                onPrev={onPrev}
+                onNext={onNext}
+                prevDisabled={prevDisabled}
+                nextDisabled={nextDisabled}
             >
                 <Panel className="test2">
                     <HeaderRow>

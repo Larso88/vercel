@@ -1,58 +1,139 @@
-import axios from 'axios';
+import axios from "axios";
+import keycloak from "../auth/keycloak";
+
+export interface ShoppingList {
+    id: number;
+    ownerUserId: string;
+    name: string;
+    createdAt: string;
+}
 
 export interface ShoppingListItem {
     id: number;
+    shoppingListId: number;
     name: string;
     quantity: number;
-    purchased: boolean;
-    unit?: string
+    createdAt: string;
 }
 
-export type ShoppingListResponse = ShoppingListItem[];
+export type ShoppingListsResponse = ShoppingList[];
+export type ShoppingListItemsResponse = ShoppingListItem[];
 
-const BASE_URL = import.meta.env.VITE_REACT_APP_SHOPPING_LIST_API_URL as string || 'http://localhost:8080/api/shoppinglist';
 
+const API_ORIGIN =
+    (import.meta.env.VITE_REACT_APP_SHOPPING_LIST_API_URL as string) ||
+    "http://localhost:8080";
 
 const axiosInstance = axios.create({
-    baseURL: BASE_URL,
+    baseURL: API_ORIGIN,
     headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
     },
 });
 
 
-export const fetchShoppingList = async () : Promise<ShoppingListResponse> => {
-    try {
-        const response = await axiosInstance.get<ShoppingListResponse>('');
-        return response.data as ShoppingListResponse;
-    } catch (error) {
-        console.error('Error fetching shopping list:', error);
-        throw error;
-    }
-};
+axiosInstance.interceptors.request.use(async (config) => {
+    if (keycloak.authenticated) {
+        try {
+            await keycloak.updateToken(30);
+        } catch (err) {
+            console.warn("Keycloak token refresh failed:", err);
+        }
 
-export const addShoppingListItem = async (item: Omit<ShoppingListItem, 'id'>) : Promise<ShoppingListItem> => {
+        if (keycloak.token) {
+            config.headers = config.headers ?? {};
+            config.headers.Authorization = `Bearer ${keycloak.token}`;
+        }
+    }
+
+    return config;
+});
+
+
+export const fetchLists = async (): Promise<ShoppingListsResponse> => {
     try {
-        const response = await axiosInstance.post('', item);
+        const response = await axiosInstance.get<ShoppingListsResponse>("/api/lists");
         return response.data;
     } catch (error) {
-        console.error('Error adding item:', error);
+        console.error("Error fetching lists:", error);
         throw error;
     }
 };
 
-export const deleteShoppingListItem = async (itemId: number): Promise<void> => {
+export const createList = async (name: string): Promise<ShoppingList> => {
     try {
-        await axiosInstance.delete(`/${itemId}`);
-    } catch (error : any) {
+        const payload = { name: name.trim() };
+        const response = await axiosInstance.post<ShoppingList>("/api/lists", payload);
+        return response.data;
+    } catch (error) {
+        console.error("Error creating list:", error);
+        throw error;
+    }
+};
+
+export const deleteList = async (listId: number): Promise<void> => {
+    try {
+        await axiosInstance.delete(`/api/lists/${listId}`);
+    } catch (error: any) {
         if (error.response) {
-            console.error('Error response:', error.response.data);
-            throw new Error(error.response.data.message || 'Failed to delete item');
+            console.error("Error response:", error.response.data);
+            throw new Error(error.response.data?.message || "Failed to delete list");
         } else if (error.request) {
-            console.error('No response from server:', error.request);
-            throw new Error('No response from server');
+            console.error("No response from server:", error.request);
+            throw new Error("No response from server");
         } else {
-            console.error('Error:', error.message);
+            console.error("Error:", error.message);
+            throw new Error(error.message);
+        }
+    }
+};
+
+
+export const fetchItems = async (listId: number): Promise<ShoppingListItemsResponse> => {
+    try {
+        const response = await axiosInstance.get<ShoppingListItemsResponse>(
+            `/api/lists/${listId}/items`
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching items:", error);
+        throw error;
+    }
+};
+
+export const addShoppingListItem = async (
+    listId: number,
+    item: Pick<ShoppingListItem, "name" | "quantity">
+): Promise<ShoppingListItem> => {
+    try {
+        const payload = {
+            name: item.name.trim(),
+            quantity: item.quantity,
+        };
+
+        const response = await axiosInstance.post<ShoppingListItem>(
+            `/api/lists/${listId}/items`,
+            payload
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error adding item:", error);
+        throw error;
+    }
+};
+
+export const deleteShoppingListItem = async (listId: number, itemId: number): Promise<void> => {
+    try {
+        await axiosInstance.delete(`/api/lists/${listId}/items/${itemId}`);
+    } catch (error: any) {
+        if (error.response) {
+            console.error("Error response:", error.response.data);
+            throw new Error(error.response.data?.message || "Failed to delete item");
+        } else if (error.request) {
+            console.error("No response from server:", error.request);
+            throw new Error("No response from server");
+        } else {
+            console.error("Error:", error.message);
             throw new Error(error.message);
         }
     }
