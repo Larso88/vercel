@@ -1,9 +1,8 @@
-// src/components/AddShoppingList.tsx
-import React, { useEffect, useMemo, useState } from "react";
-import styled, { keyframes } from "styled-components";
-import { Plus, X } from "lucide-react";
+import React, {useEffect, useMemo, useState} from "react";
+import styled, {keyframes} from "styled-components";
+import {Plus, X} from "lucide-react";
 import colors from "../assets/colors";
-import { createList, type ShoppingList } from "../api/ShoppingListController";
+import {createList, type ShoppingList} from "../api/ShoppingListController";
 
 const Wrapper = styled.div`
   width: 90%;
@@ -17,7 +16,7 @@ const Bar = styled.div`
   width: 100%;
   max-width: 560px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
 `;
 
 const flash = keyframes`
@@ -64,10 +63,6 @@ const Button = styled.button<{ $flash?: boolean }>`
 const ButtonText = styled.span`
   font-size: 13px;
   font-weight: 700;
-
-  @media (max-width: 520px) {
-    display: none;
-  }
 `;
 
 const Overlay = styled.div`
@@ -201,7 +196,7 @@ type Props = {
     onListCreated?: (list: ShoppingList) => void;
 };
 
-const AddShoppingList: React.FC<Props> = ({ onListCreated }) => {
+const AddShoppingList: React.FC<Props> = ({ onListCreated}) => {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
     const [saving, setSaving] = useState(false);
@@ -251,10 +246,8 @@ const AddShoppingList: React.FC<Props> = ({ onListCreated }) => {
 
     return (
         <Wrapper>
+
             <Bar>
-                <div>
-                    <h3>{name}</h3>
-                </div>
                 <Button
                     onClick={() => {
                         handleFlash();
@@ -264,8 +257,8 @@ const AddShoppingList: React.FC<Props> = ({ onListCreated }) => {
                     aria-label="Create list"
                     title="Create list"
                 >
-                    <Plus size={18} />
                     <ButtonText>Ny liste</ButtonText>
+                    <Plus size={18} />
                 </Button>
             </Bar>
 

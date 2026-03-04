@@ -170,7 +170,7 @@ const AddShoppingListItem: React.FC<Props> = ({ listId, onItemAdded }) => {
                     <NameInput
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder={listId ? "Legg til vare..." : "Opprett/velg en liste først"}
+                        placeholder={listId ? "Legg til element" : "Opprett/velg en liste først"}
                         autoComplete="off"
                         enterKeyHint="done"
                         disabled={saving || !listId}

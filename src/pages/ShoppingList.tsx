@@ -14,6 +14,7 @@ import SidePager from "../components/SidePager";
 import SwipeableListItem from "../components/SwipeableListItem";
 import colors from "../assets/colors";
 import AddShoppingList from "../components/AddShoppingList";
+import ListNameHeader from "../components/ListNameHeader.tsx";
 
 const keyline = "rgba(255,255,255,0.06)";
 const shadow = "rgba(0,0,0,0.35)";
@@ -50,9 +51,7 @@ const HeaderRow = styled.div`
     border-bottom: 1px solid ${keyline};
 `;
 
-const HeaderCell = styled.div<{ align?: "left" | "right" }>`
-    text-align: ${({ align }) => align ?? "left"};
-`;
+
 
 const StyledUl = styled.ul`
     justify-content: center;
@@ -126,7 +125,6 @@ export default function ShoppingList() {
     const [items, setItems] = useState<ShoppingListItem[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // Fetch lists once
     useEffect(() => {
         let cancelled = false;
 
@@ -156,7 +154,6 @@ export default function ShoppingList() {
         };
     }, []);
 
-    // Fetch items when active list changes
     useEffect(() => {
         let cancelled = false;
 
@@ -182,7 +179,6 @@ export default function ShoppingList() {
         };
     }, [activeListId]);
 
-    // SidePager navigation
     const activeIndex = useMemo(() => {
         if (!activeListId) return -1;
         return lists.findIndex((l) => l.id === activeListId);
@@ -221,13 +217,13 @@ export default function ShoppingList() {
                     setActiveListId(created.id);
                     setItems([]);
                 }}
+                label={activeListName}
             />
 
             <AddShoppingListItem
                 listId={activeListId ?? undefined}
                 onItemAdded={handleItemAdded}
             />
-
             <SidePager
                 label={activeListName}
                 onPrev={onPrev}
@@ -235,10 +231,10 @@ export default function ShoppingList() {
                 prevDisabled={prevDisabled}
                 nextDisabled={nextDisabled}
             >
+
                 <Panel className="test2">
                     <HeaderRow>
-                        <HeaderCell>Vare</HeaderCell>
-                        <HeaderCell align="right">Ant.</HeaderCell>
+                        <ListNameHeader name={activeListName} />
                     </HeaderRow>
 
                     {loading ? (

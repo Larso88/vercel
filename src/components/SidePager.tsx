@@ -45,7 +45,7 @@ const Fade = styled.div<{ side: "left" | "right" }>`
 
 const Button = styled.button<{ side: "left" | "right" }>`
   position: absolute;
-  top: 50%;
+  top: 55%;
   ${({ side }) => (side === "left" ? "left: 8px;" : "right: 8px;")}
   transform: translateY(-50%);
   width: 46px;

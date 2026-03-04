@@ -10,7 +10,7 @@ const shadow = "rgba(0,0,0,0.35)";
 const text = "rgba(255,255,255,0.9)";
 
 const Shell = styled.li`
-    width: 80%;
+    width: 95%;
     position: relative;
     list-style: none;
     margin: 0;
