@@ -217,7 +217,6 @@ export default function ShoppingList() {
                     setActiveListId(created.id);
                     setItems([]);
                 }}
-                label={activeListName}
             />
 
             <AddShoppingListItem

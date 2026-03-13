@@ -6,6 +6,7 @@ import {X} from "lucide-react";
 interface DeleteButtonProps {
     id: number;
     onDeleteSuccess: () => void;
+    listId: number;
 }
 
 const StyledDeleteButton = styled.button`
@@ -27,7 +28,7 @@ const StyledDeleteButton = styled.button`
     }
 `;
 
-const DeleteButton: React.FC<DeleteButtonProps> = ({ id, onDeleteSuccess }) => {
+const DeleteButton: React.FC<DeleteButtonProps> = ({ id, onDeleteSuccess, listId} ) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +36,7 @@ const DeleteButton: React.FC<DeleteButtonProps> = ({ id, onDeleteSuccess }) => {
         setLoading(true);
         setError(null);
         try {
-            await deleteShoppingListItem(id);
+            await deleteShoppingListItem(id, listId);
             onDeleteSuccess();
         } catch (err: unknown) {
             setError((err as Error).message  || "Failed to delete");
