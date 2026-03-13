@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v3.1";
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 
 self.addEventListener("install", (event) => {
